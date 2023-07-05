@@ -1,7 +1,7 @@
 # Made by Digitality.dev | https://discord.gg/digitality
 # Only minimessage format is supported as color! (https://docs.adventure.kyori.net/minimessage.html)
 
-prefix: "<gradient:#0BC1FB:#1AFDFD>Server</gradient> <dark_gray>| "
+prefix: "<gradient:#0BC1FB:#1AFDFD>VelocityCommands</gradient> <dark_gray>| "
 default-message: "Unknown command. Type \"/help\" for help."
 
 reload-message: "<green>Configuration file settings.yml was successfully reloaded!"
