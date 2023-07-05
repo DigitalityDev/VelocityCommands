@@ -1,6 +1,5 @@
 package dev.digitality.velocitycommands.managers;
 
-import com.mojang.brigadier.Command;
 import com.velocitypowered.api.event.Subscribe;
 import dev.digitality.velocitycommands.DigitalMain;
 import dev.digitality.velocitycommands.utils.ChatUtils;
@@ -39,7 +38,7 @@ public class ConfigManager {
         if (!file.exists()) {
             file.getParentFile().mkdirs();
 
-            try (InputStream in = ConfigManager.class.getResourceAsStream(fileName)) {
+            try (InputStream in = ConfigManager.class.getResourceAsStream("/" + fileName)) {
                 if (in != null)
                     Files.copy(in, file.toPath());
                 else

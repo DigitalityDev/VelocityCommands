@@ -8,6 +8,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.digitality.velocitycommands.commands.ReloadCommand;
+import dev.digitality.velocitycommands.managers.CommandOverrideManager;
 import dev.digitality.velocitycommands.managers.ConfigManager;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public final class DigitalMain {
 
         instance = this;
 
-        logger.info("[VelocityCommands] Plugin was successfully loaded!");
+        logger.info("Plugin was successfully loaded!");
     }
 
     @Subscribe
@@ -41,6 +42,6 @@ public final class DigitalMain {
         server.getCommandManager().register("reload-cmds", new ReloadCommand());
 
         ConfigManager.reloadConfigs();
-        getServer().getEventManager().register(DigitalMain.getInstance(), this);
+        getServer().getEventManager().register(DigitalMain.getInstance(), new CommandOverrideManager());
     }
 }
