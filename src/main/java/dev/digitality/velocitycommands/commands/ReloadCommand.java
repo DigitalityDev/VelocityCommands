@@ -11,10 +11,10 @@ public class ReloadCommand implements SimpleCommand {
         CommandSource source = invocation.source();
 
         if (!source.hasPermission("velocitycommands.reload")) {
-            source.sendMessage(ChatUtils.colorize("<red>You do not have permission to use this command."));
+            source.sendMessage(ChatUtils.getPrefix().append(ChatUtils.colorize(ConfigManager.getConfig().getString("no-permission"))));
         } else {
             ConfigManager.reloadConfigs();
-            source.sendMessage(ChatUtils.colorize("<green>Successfully reloaded the config files."));
+            source.sendMessage(ChatUtils.getPrefix().append(ChatUtils.colorize(ConfigManager.getConfig().getString("reload-message"))));
         }
     }
 }

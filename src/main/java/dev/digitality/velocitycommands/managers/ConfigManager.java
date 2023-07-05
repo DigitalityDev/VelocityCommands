@@ -21,7 +21,7 @@ public class ConfigManager {
         CommandOverrideManager.getDisabledCommands().clear();
         CommandOverrideManager.getOverridenCommands().clear();
 
-        config = loadConfig("commands.yml");
+        config = loadConfig("settings.yml");
 
         ConfigManager.getConfig().getSection("overriden-commands").getKeys().forEach(key -> CommandOverrideManager.getOverridenCommands().put(key.toLowerCase(), ChatUtils.colorize(ConfigManager.getConfig().getString("overriden-commands." + key))));
         CommandOverrideManager.getDisabledCommands().addAll(ConfigManager.getConfig().getStringList("disabled-commands").stream().map(String::toLowerCase).toList());
@@ -53,6 +53,14 @@ public class ConfigManager {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static void saveConfig(Configuration configuration, String fileName) {
+        try {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, new File(DigitalMain.getInstance().getDataDirectory().toFile(), fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -22,10 +22,16 @@ public class CommandOverrideManager {
         if (!(e.getCommandSource() instanceof Player player))
             return;
 
+        if (player.hasPermission("velocitycommands.bypass"))
+            return;
+
         String command = e.getCommand().toLowerCase().split(" ")[0];
 
+        if (command.contains(":") && ConfigManager.getConfig().getBoolean("disable-colon-bypass"))
+            command = command.split(":")[1];
+
         if (disabledCommands.contains(command)) {
-            player.sendMessage(ChatUtils.colorize("Unknown command. Type \"/help\" for help."));
+            player.sendMessage(ChatUtils.colorize(ConfigManager.getConfig().getString("default-message")));
 
             e.setResult(CommandExecuteEvent.CommandResult.denied());
         } else if (overridenCommands.containsKey(command)) {

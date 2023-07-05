@@ -8,6 +8,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.digitality.velocitycommands.commands.ReloadCommand;
+import dev.digitality.velocitycommands.commands.VelocityCommands;
 import dev.digitality.velocitycommands.managers.CommandOverrideManager;
 import dev.digitality.velocitycommands.managers.ConfigManager;
 import lombok.Getter;
@@ -40,6 +41,7 @@ public final class DigitalMain {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         server.getCommandManager().register("reload-cmds", new ReloadCommand());
+        server.getCommandManager().register("vcmds", new VelocityCommands());
 
         ConfigManager.reloadConfigs();
         getServer().getEventManager().register(DigitalMain.getInstance(), new CommandOverrideManager());

@@ -1,0 +1,23 @@
+# Made by Digitality.dev | https://discord.gg/digitality
+# Only minimessage format is supported as color! (https://docs.adventure.kyori.net/minimessage.html)
+
+prefix: "<gradient:#0BC1FB:#1AFDFD>Server</gradient> <dark_gray>| "
+default-message: "Unknown command. Type \"/help\" for help."
+
+reload-message: "<green>Configuration file settings.yml was successfully reloaded!"
+no-permission: "<red>You don't have permission to do that!"
+
+disabled-commands:
+  - "pl"
+  - "plugins"
+  - "about"
+  - "bukkit"
+  - "ver"
+  - "version"
+  - "icanhasbukkit"
+
+overriden-commands:
+  discord: "<gradient:#0BC1FB:#1AFDFD>Social</gradient> <dark_gray>| <gray>Join our community <green>https://discord.gg/digitality"
+
+disable-colon-bypass: true
+# This automatically blocks commands like /bukkit:plugins
