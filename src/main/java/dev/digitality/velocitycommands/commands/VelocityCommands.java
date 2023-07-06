@@ -15,10 +15,17 @@ public class VelocityCommands implements SimpleCommand {
             return;
         }
 
+        if (invocation.arguments().length == 1 && invocation.arguments()[0].equals("reload")) {
+            ConfigManager.reloadConfigs();
+            invocation.source().sendMessage(ChatUtils.getPrefix().append(ChatUtils.colorize(ConfigManager.getConfig().getString("reload-message"))));
+            return;
+        }
+
         if (!(invocation.arguments().length == 3) && !(invocation.arguments().length == 4)) {
             invocation.source().sendMessage(ChatUtils.getPrefix().append(ChatUtils.colorize("<white>Usage: <aqua>/vcmds <overriden/disabled> <add/remove> <command>")));
             return;
         }
+
         if (invocation.arguments()[0].equals("overriden")) {
             if (invocation.arguments()[1].equals("add")) {
                 if (invocation.arguments().length == 4) {
