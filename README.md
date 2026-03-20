@@ -31,5 +31,3 @@ A lightweight but powerful Velocity proxy plugin that lets you block, disable, a
 | `velocitycommands.staff` | Access to all `/vcmds` subcommands |
 | `velocitycommands.bypass` | Bypass all command blocks and overrides |
 
-## Configuration
-```yaml
