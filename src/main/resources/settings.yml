@@ -1,28 +1,62 @@
-# Made by Digitality.dev | https://discord.gg/digitality
-# Only minimessage format is supported as color! (https://docs.adventure.kyori.net/minimessage.html)
+# VelocityCommands v2.0.0 | by Digitality
+# This file contains all the settings for VelocityCommands.
+# Need help or want to report a bug? Join our Discord: https://discord.gg/rvWmR4scc
 
 prefix: "<gradient:#0BC1FB:#1AFDFD>VelocityCommands</gradient> <dark_gray>| "
 default-message: "Unknown command. Type \"/help\" for help."
 
 reload-message: "<green>Configuration file settings.yml was successfully reloaded!"
 no-permission: "<red>You don't have permission to do that!"
+usage-message: "<red>Usage: <gray>{usage}"
+
+# This automatically blocks commands like /bukkit:plugins
+disable-colon-bypass: true
 
 disabled-commands:
+  # Plugin discovery
   - "pl"
   - "plugins"
+  - "bukkit:plugins"
+  - "minecraft:plugins"
+
+  # Version / server info
+  - "ver"
+  - "version"
   - "about"
   - "bukkit"
-  - "ver"
-  - "version"
+  - "bukkit:ver"
+  - "bukkit:version"
+  - "minecraft:version"
+
+  # Legacy / exploits
   - "icanhasbukkit"
+
+  # Help exposure (handled via override instead)
+  - "minecraft:help"
+  - "bukkit:help"
 
 disable-tab-complete:
+  # Version leaks
   - "ver"
   - "version"
-  - "icanhasbukkit"
+  - "bukkit:version"
+  - "minecraft:version"
 
-overriden-commands:
+  # Plugin leaks
+  - "pl"
+  - "plugins"
+  - "bukkit:plugins"
+  - "minecraft:plugins"
+
+  # Help leaks
+  - "help"
+  - "?"
+  - "bukkit:help"
+  - "minecraft:help"
+
+# These commands will be overridden with custom messages instead of being blocked entirely.
+# Don't want them? Just add them to the disabled-commands list instead.
+overridden-commands:
   discord: "<gradient:#0BC1FB:#1AFDFD>Social</gradient> <dark_gray>| <gray>Join our community <green>https://discord.gg/digitality"
-
-disable-colon-bypass: true
-# This automatically blocks commands like /bukkit:plugins
+  help: "<gradient:#0BC1FB:#1AFDFD>Help</gradient> <dark_gray>| <gray>Use <green>/discord <gray>to get support."
+  "?": "<gradient:#0BC1FB:#1AFDFD>Help</gradient> <dark_gray>| <gray>Use <green>/discord <gray>to get support."

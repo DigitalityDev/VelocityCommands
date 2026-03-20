@@ -1,71 +1,110 @@
 package dev.digitality.velocitycommands.managers;
 
-import com.velocitypowered.api.event.Subscribe;
-import dev.digitality.velocitycommands.DigitalMain;
-import dev.digitality.velocitycommands.utils.ChatUtils;
 import lombok.Getter;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
-public class ConfigManager {
+public final class ConfigManager {
+
     @Getter
-    private static Configuration config;
+    private static ConfigManager instance;
 
-    public static void reloadConfigs() {
-        CommandOverrideManager.getDisabledCommands().clear();
-        CommandOverrideManager.getOverridenCommands().clear();
+    private final Path dataDirectory;
+    private final Logger logger;
+    private Map<String, Object> config = new LinkedHashMap<>();
 
-        config = loadConfig("settings.yml");
-        if (!config.contains("disable-tab-complete"))
-            config.set("disable-tab-complete", List.of("ver", "version", "icanhasbukkit"));
-
-        ConfigManager.getConfig().getSection("overriden-commands").getKeys().forEach(key -> CommandOverrideManager.getOverridenCommands().put(key.toLowerCase(), ChatUtils.colorize(ConfigManager.getConfig().getString("overriden-commands." + key))));
-        CommandOverrideManager.getDisabledCommands().addAll(ConfigManager.getConfig().getStringList("disabled-commands").stream().map(String::toLowerCase).toList());
-        CommandOverrideManager.getDisabledAutocompleteCommands().addAll(ConfigManager.getConfig().getStringList("disable-tab-complete").stream().map(String::toLowerCase).toList());
+    public ConfigManager(Path dataDirectory, Logger logger) {
+        instance = this;
+        this.dataDirectory = dataDirectory;
+        this.logger = logger;
     }
 
-    @Subscribe
-    public static Configuration loadConfig(String fileName) {
-        if (!DigitalMain.getInstance().getDataDirectory().toFile().exists()) {
-            DigitalMain.getInstance().getDataDirectory().toFile().mkdirs();
-        }
+    public static void load() {
+        try { Files.createDirectories(instance.dataDirectory); }
+        catch (IOException e) { instance.logger.severe("Failed to create data directory"); }
 
-        File file = new File(DigitalMain.getInstance().getDataDirectory().toFile(), fileName);
-        // Create default config
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-
-            try (InputStream in = ConfigManager.class.getResourceAsStream("/" + fileName)) {
-                if (in != null)
-                    Files.copy(in, file.toPath());
-                else
-                    Files.createFile(file.toPath());
+        Path configFile = instance.dataDirectory.resolve("settings.yml");
+        if (!Files.exists(configFile)) {
+            try (InputStream in = instance.getClass().getResourceAsStream("/settings.yml")) {
+                if (in != null) Files.copy(in, configFile);
+                else Files.createFile(configFile);
             } catch (IOException e) {
-                e.printStackTrace();
+                instance.logger.severe("Failed to copy default settings.yml");
             }
         }
 
-        try {
-            return ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(DigitalMain.getInstance().getDataDirectory().toFile(), fileName));
+        try (Reader reader = new FileReader(configFile.toFile())) {
+            Yaml yaml = new Yaml();
+            Map<String, Object> loaded = yaml.load(reader);
+            instance.config = loaded != null ? loaded : new LinkedHashMap<>();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            instance.logger.severe("Failed to load settings.yml");
         }
     }
 
-    public static void saveConfig(Configuration configuration, String fileName) {
-        try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, new File(DigitalMain.getInstance().getDataDirectory().toFile(), fileName));
+    public static void save() {
+        Path configFile = instance.dataDirectory.resolve("settings.yml");
+        DumperOptions opts = new DumperOptions();
+        opts.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        opts.setPrettyFlow(true);
+
+        try (Writer writer = new FileWriter(configFile.toFile())) {
+            new Yaml(opts).dump(instance.config, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            instance.logger.severe("Failed to save settings.yml");
         }
+    }
+
+    public static void reload() {
+        instance.config.clear();
+        load();
+    }
+
+    public static String getString(String key, String def) {
+        Object val = get(key);
+        return val instanceof String s ? s : def;
+    }
+
+    public static boolean getBoolean(String key, boolean def) {
+        Object val = get(key);
+        return val instanceof Boolean b ? b : def;
+    }
+
+    public static List<String> getStringList(String key) {
+        Object val = get(key);
+        if (val instanceof List<?> list)
+            return list.stream().filter(o -> o instanceof String).map(o -> (String) o).toList();
+        return Collections.emptyList();
+    }
+
+    public static Map<String, String> getStringMap(String key) {
+        Object val = instance.config.get(key);
+        if (val == null) return Collections.emptyMap();
+        if (val instanceof Map<?, ?> map) {
+            Map<String, String> result = new LinkedHashMap<>();
+            map.forEach((k, v) -> {
+                if (k instanceof String ks && v instanceof String vs) result.put(ks, vs);
+            });
+            return result;
+        }
+        return Collections.emptyMap();
+    }
+
+    public static void set(String key, Object value) {
+        instance.config.put(key, value);
+    }
+
+    private static Object get(String key) {
+        return instance.config.get(key);
     }
 }
 
